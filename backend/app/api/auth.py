@@ -1,0 +1,5 @@
+# backend/app/api/auth.py
+from fastapi import APIRouter
+router = APIRouter()
+@router.post("/login")
+async def login(): return {"status": "success"}
