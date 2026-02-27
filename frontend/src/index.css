@@ -1,0 +1,16 @@
+/* frontend/src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --bg-primary: #040508;
+  --bg-secondary: #070b12;
+  --bg-card: #0c1220;
+  --accent-primary: #00c8ff;
+  --bull: #00ff88;
+  --bear: #ff3366;
+  --text-primary: #c8d8f0;
+  --text-secondary: #4a6080;
+}
+body { background-color: var(--bg-primary); color: var(--text-primary); font-family: sans-serif; }
+.anza-card { background-color: var(--bg-card); border: 1px solid rgba(255,255,255,0.05); border-radius: 0.5rem; }
