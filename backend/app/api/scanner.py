@@ -1,58 +1,47 @@
-# backend/app/api/scanner.py
-
-from fastapi import APIRouter, Query, HTTPException
-from typing import List, Optional
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
+from typing import List
+from sqlalchemy.orm import Session
+from app.db.session import get_db
+from app.models.market import AnalysisResult, OptionChain
+from app.engine.manager import MarketDataManager
 
 router = APIRouter()
+manager = MarketDataManager()
 
-class ScannerResult(BaseModel):
-    symbol: str
-    momentum_score: float
-    verdict_emoji: str
-    oi_signal: str
-    velocity_zscore: float
-    gex_regime: str
-
-    class Config:
-        from_attributes = True
-
-@router.get("/", response_model=List[ScannerResult])
-async def get_scanner_results(
-    limit: int = 10,
-    filter: Optional[str] = Query(None, description="bull|bear|all"),
-    watchlist_only: bool = False
-):
+@router.get("/overview", response_model=dict)
+async def get_market_overview(db: Session = Depends(get_db)):
     """
-    Returns top N stocks by momentum score.
-    This data is pre-computed by Celery workers and stored in Redis/DB.
+    Get high-level market overview: NIFTY/BANKNIFTY PCR, Max Pain, Sentiment.
     """
-    # Mock data for now until DB/Worker is fully integrated
-    mock_data = [
-        ScannerResult(
-            symbol="RELIANCE",
-            momentum_score=87.5,
-            verdict_emoji="⚡🟢",
-            oi_signal="LONG_BUILDUP",
-            velocity_zscore=3.2,
-            gex_regime="NEGATIVE"
-        ),
-        ScannerResult(
-            symbol="INFY",
-            momentum_score=76.0,
-            verdict_emoji="🟢",
-            oi_signal="SHORT_COVERING",
-            velocity_zscore=1.8,
-            gex_regime="POSITIVE"
-        ),
-        ScannerResult(
-            symbol="SBIN",
-            momentum_score=42.0,
-            verdict_emoji="🟡",
-            oi_signal="LONG_UNWINDING",
-            velocity_zscore=-0.5,
-            gex_regime="POSITIVE"
-        ),
-    ]
+    # Fetch latest analysis results from DB
+    nifty = db.query(AnalysisResult).filter(AnalysisResult.symbol == "NIFTY").order_by(AnalysisResult.time.desc()).first()
+    banknifty = db.query(AnalysisResult).filter(AnalysisResult.symbol == "BANKNIFTY").order_by(AnalysisResult.time.desc()).first()
 
-    return mock_data[:limit]
+    return {
+        "nifty": nifty,
+        "banknifty": banknifty,
+        "timestamp": nifty.time if nifty else None
+    }
+
+@router.get("/option-chain/{symbol}", response_model=List[dict])
+async def get_option_chain(symbol: str, db: Session = Depends(get_db)):
+    """
+    Get processed Option Chain with Greeks for a symbol.
+    """
+    # Fetch latest option chain snapshot
+    chain = db.query(OptionChain).filter(OptionChain.symbol == symbol).order_by(OptionChain.time.desc()).limit(100).all()
+    if not chain:
+        raise HTTPException(status_code=404, detail="Option Chain not found")
+
+    return chain
+
+@router.get("/analysis/{symbol}", response_model=dict)
+async def get_analysis(symbol: str, db: Session = Depends(get_db)):
+    """
+    Get detailed OI analysis (PCR, Walls, Max Pain) for a symbol.
+    """
+    analysis = db.query(AnalysisResult).filter(AnalysisResult.symbol == symbol).order_by(AnalysisResult.time.desc()).first()
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+
+    return analysis
