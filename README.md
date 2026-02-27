@@ -85,6 +85,13 @@ Once the containers are up and running, you can access the platform at the follo
 
 ---
 
+## 📦 Dependencies
+
+- **Backend**: Managed via `backend/requirements.txt`. Includes FastAPI, Celery, Pandas, and quantitative libraries.
+- **Frontend**: Managed via `frontend/package.json`. Includes React, Recharts, and TailwindCSS.
+
+---
+
 ## 📂 Project Structure
 
 - `backend/app/core`: The quantitative "brain" (Greeks, GEX, signals).
