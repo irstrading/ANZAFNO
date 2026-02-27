@@ -13,7 +13,17 @@ Advanced F&O Trading Intelligence Platform for the Indian Market (NSE). Built fo
 
 ---
 
-## 🛠️ Tech Stack
+## 🛡️ The 4-Layer Rate Limit Defense System
+
+To handle the aggressive rate limits of the AngelOne SmartAPI, the platform implements a sophisticated defense system:
+1. **Layer 1: Token Bucket**: Per-endpoint rate limiting (Option Chain, Market Data, LTP, Historical).
+2. **Layer 2: Intelligent Schedule**: Market-hours aware scanning (Opening, Midday, Closing, EOD phases).
+3. **Layer 3: Delta Compression**: Only fetches and stores what changed in the option chain.
+4. **Layer 4: WebSocket First**: Uses live ticks for price, saving thousands of REST calls per hour.
+
+---
+
+## 🛠️ Tech Stack (100% Free)
 
 - **Backend**: Python 3.11, FastAPI, Celery, Redis.
 - **Database**: TimescaleDB (Time-series optimized PostgreSQL).
@@ -47,10 +57,16 @@ Open `.env` and provide your:
 - **Telegram**: `BOT_TOKEN`, `CHAT_ID`.
 - **Database**: Set a strong `DB_PASSWORD`.
 
-### 4. Start the Platform
+### 4. One-Command Startup
 Launch all 7 services with a single command:
 ```bash
 docker-compose up -d
+```
+
+### 5. Verify Installation
+Check if all services are running:
+```bash
+docker-compose ps
 ```
 
 ---
