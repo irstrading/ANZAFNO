@@ -1,13 +1,12 @@
 # backend/app/tasks/celery_app.py
-import os
-from celery import Celery
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
+from celery import Celery
+from ..config import settings
 
 celery_app = Celery(
     "anza_tasks",
-    broker=REDIS_URL,
-    backend=REDIS_URL
+    broker=settings.REDIS_URL,
+    backend=settings.REDIS_URL
 )
 
 celery_app.conf.update(
@@ -16,17 +15,17 @@ celery_app.conf.update(
     result_serializer="json",
     timezone="Asia/Kolkata",
     enable_utc=True,
+    broker_connection_retry_on_startup=True,
 )
 
+# Example scheduled task configuration (beat)
 celery_app.conf.beat_schedule = {
-    "scan-watchlist-every-minute": {
-        "task": "app.tasks.polling_tasks.scan_watchlist",
-        "schedule": 60.0,
-    },
-    "scan-all-fno-every-3-minutes": {
-        "task": "app.tasks.polling_tasks.scan_all_fno",
-        "schedule": 180.0,
-    },
+    # 'scan-watchlist-every-minute': {
+    #     'task': 'app.tasks.scan_tasks.scan_watchlist',
+    #     'schedule': 60.0,
+    # },
 }
 
-import app.tasks.polling_tasks # Ensure tasks are registered
+@celery_app.task
+def dummy_task():
+    return "Celery is working!"
