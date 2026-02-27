@@ -1,77 +1,75 @@
-# ANZA FNO Intelligence Platform - Windows Setup Guide
+# ANZA FNO Intelligence Platform
+
+## Overview
+Institutional-grade Indian F&O analysis platform with real-time data, advanced Greeks, and AI-driven insights.
 
 ## Prerequisites
 
 1.  **Python 3.11+**: [Download Python](https://www.python.org/downloads/windows/)
-    *   Make sure to check "Add Python to PATH" during installation.
-2.  **PostgreSQL**: [Download PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
-    *   During installation, remember the password you set (default is usually `postgres`/`password`).
-    *   **TimescaleDB**: Ideally install TimescaleDB extension. If not available, standard Postgres works but is slower for history.
-3.  **Redis**: [Download Redis for Windows](https://github.com/microsoftarchive/redis/releases)
-    *   Install the `.msi` file and ensure the service is running.
+2.  **Node.js 18+**: [Download Node.js](https://nodejs.org/en/download)
+3.  **PostgreSQL**: [Download PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+4.  **Redis**: [Download Redis for Windows](https://github.com/microsoftarchive/redis/releases)
 
-## Installation
+## Installation & Setup
 
-1.  **Clone the Repository**:
-    ```bash
-    git clone <your-repo-url>
-    cd anza-fno
-    ```
-
-2.  **Set up Virtual Environment**:
+### 1. Backend Setup
+1.  Navigate to `backend` folder.
+2.  Create virtual environment:
     ```bash
     python -m venv venv
     venv\Scripts\activate
     ```
-
-3.  **Install Dependencies**:
+3.  Install dependencies:
     ```bash
-    pip install -r backend/requirements.txt
+    pip install -r requirements.txt
+    ```
+4.  Configure `.env` (copy from `.env.example`).
+5.  Initialize Database:
+    ```bash
+    python app/db/init_db.py
     ```
 
-4.  **Configure Environment**:
-    *   Copy `.env.example` to `.env` in the `backend` folder.
-    *   Open `backend/.env` and update your AngelOne credentials and DB password.
+### 2. Frontend Setup
+1.  Navigate to `frontend` folder.
+2.  Install dependencies:
     ```bash
-    copy backend\.env.example backend\.env
-    ```
-
-5.  **Initialize Database**:
-    ```bash
-    python backend/app/db/init_db.py
+    npm install
     ```
 
 ## Running the Platform
 
-To make it easy, use the `run.bat` script (double-click it or run from terminal).
+### Option A: One-Click Script (Windows)
+Double-click `run.bat` in the root folder. This starts Redis (if needed), Celery Worker, Celery Beat, Backend API, and Frontend Dev Server.
 
-### Manual Startup
+### Option B: Manual Startup
 
-1.  **Start Redis Server** (if not running as service):
-    ```bash
-    redis-server
-    ```
+**Terminal 1 (Backend):**
+```bash
+cd backend
+venv\Scripts\activate
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-2.  **Start Backend API**:
-    ```bash
-    uvicorn backend.app.main:app --reload
-    ```
-    *   API Docs: http://localhost:8000/docs
+**Terminal 2 (Frontend):**
+```bash
+cd frontend
+npm run dev
+```
 
-3.  **Start Celery Worker** (for background tasks):
-    ```bash
-    celery -A backend.app.celery_app worker --loglevel=info -P solo
-    ```
-    *(Note: `-P solo` is required for Celery on Windows)*
+**Terminal 3 (Celery Worker):**
+```bash
+cd backend
+venv\Scripts\activate
+celery -A app.celery_app worker --loglevel=info -P solo
+```
 
-4.  **Start Celery Beat** (for scheduled tasks):
-    ```bash
-    celery -A backend.app.celery_app beat --loglevel=info
-    ```
+**Terminal 4 (Celery Beat):**
+```bash
+cd backend
+venv\Scripts\activate
+celery -A app.celery_app beat --loglevel=info
+```
 
-## Project Structure
-
-*   `backend/app/api`: API Endpoints (FastAPI)
-*   `backend/app/engine`: Core Logic (Fetcher, Greeks, Analysis)
-*   `backend/app/models`: Database Models
-*   `backend/app/tasks.py`: Background Tasks
+## Access
+- **Frontend Dashboard**: http://localhost:5173
+- **Backend API Docs**: http://localhost:8000/docs

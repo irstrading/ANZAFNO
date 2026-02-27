@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme Variables - Default (Dark Terminal) */
+:root {
+  --color-primary: #00c8ff;
+  --color-secondary: #070b12;
+  --color-accent: #9966ff;
+  --color-background: #040508;
+  --color-surface: #0c1220;
+  --color-text: #c8d8f0;
+  --color-text-muted: #4a6080;
+  --color-border: rgba(0, 200, 255, 0.08);
+
+  --color-bull: #00ff88;
+  --color-bear: #ff3366;
+  --color-neutral: #ffaa00;
+}
+
+/* Neon Quantum */
+[data-theme='neon-quantum'] {
+  --color-primary: #7c3aed;
+  --color-secondary: #050525;
+  --color-accent: #ec4899;
+  --color-background: #020210;
+  --color-surface: #0a0a35;
+  --color-text: #e2e8f0;
+  --color-text-muted: #6b7280;
+  --color-border: rgba(124, 58, 237, 0.15);
+
+  --color-bull: #10b981;
+  --color-bear: #ef4444;
+  --color-neutral: #f59e0b;
+}
+
+/* Velonic Steel */
+[data-theme='velonic-steel'] {
+  --color-primary: #4f8ef7;
+  --color-secondary: #222736;
+  --color-accent: #7c4dff;
+  --color-background: #1a1f2e;
+  --color-surface: #2a3044;
+  --color-text: #d0d5e8;
+  --color-text-muted: #6b7a99;
+  --color-border: rgba(79, 142, 247, 0.1);
+
+  --color-bull: #2ecc71;
+  --color-bear: #e74c3c;
+  --color-neutral: #f39c12;
+}
+
+/* Upcube Admin */
+[data-theme='upcube-admin'] {
+  --color-primary: #4361ee;
+  --color-secondary: #ffffff;
+  --color-accent: #7209b7;
+  --color-background: #f0f2f8;
+  --color-surface: #ffffff;
+  --color-text: #2d3748;
+  --color-text-muted: #718096;
+  --color-border: rgba(67, 97, 238, 0.12);
+
+  --color-bull: #06d6a0;
+  --color-bear: #ef233c;
+  --color-neutral: #fb8500;
+}
+
+/* Light Professional */
+[data-theme='light-professional'] {
+  --color-primary: #0ea5e9;
+  --color-secondary: #ffffff;
+  --color-accent: #8b5cf6;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #1e293b;
+  --color-text-muted: #94a3b8;
+  --color-border: rgba(14, 165, 233, 0.1);
+
+  --color-bull: #059669;
+  --color-bear: #dc2626;
+  --color-neutral: #d97706;
+}
+
+/* Crypto Dark */
+[data-theme='crypto-dark'] {
+  --color-primary: #f0b90b;
+  --color-secondary: #13151e;
+  --color-accent: #2775ca;
+  --color-background: #0d0e14;
+  --color-surface: #1a1d28;
+  --color-text: #eaecef;
+  --color-text-muted: #848e9c;
+  --color-border: rgba(240, 185, 11, 0.08);
+
+  --color-bull: #0ecb81;
+  --color-bear: #f6465d;
+  --color-neutral: #f0b90b;
+}
+
+body {
+  @apply bg-background text-text font-sans antialiased;
+}
